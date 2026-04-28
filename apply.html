@@ -169,6 +169,9 @@ function setRadio(id,val,el){
   el.classList.add('selected');
   el.querySelector('.radio-dot').innerHTML='<div class="radio-inner"></div>';
   el.closest('.q-block').querySelectorAll('.radio-opt:not(.selected) .radio-dot').forEach(d=>d.innerHTML='');
+  // Re-render section if this answer controls a conditional question
+  const sec=SECTIONS[currentSec];
+  if(sec.qs.some(q=>q.showIf&&q.showIf.id===id)){renderSection();}
 }
 function setScale(id,val,el){
   answers[id]=val;
@@ -234,7 +237,7 @@ function validateSection(){
   for(const q of s.qs){
     if(q.showIf&&answers[q.showIf.id]!==q.showIf.val)continue;
     const v=answers[q.id];
-    if(!v||v===''||(Array.isArray(v)&&v.length===0))return false;
+    if(v===undefined||v===null||v===''||(Array.isArray(v)&&v.length===0))return false;
   }
   return true;
 }
