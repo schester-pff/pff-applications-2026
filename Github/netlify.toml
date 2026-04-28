@@ -1,0 +1,17 @@
+[build]
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/apply"
+  to = "/apply.html"
+  status = 200
+
+[[redirects]]
+  from = "/role"
+  to = "/role.html"
+  status = 200
+
+[[redirects]]
+  from = "/fit"
+  to = "/fit.html"
+  status = 200

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PFF Enterprise — Part-Time Data Collector 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Manrope',system-ui,sans-serif;background-color:#1F1F22;background-image:radial-gradient(ellipse 4px 2.5px at 50% 50%,#2a2a2e 55%,transparent 55%),radial-gradient(ellipse 4px 2.5px at 50% 50%,#2a2a2e 55%,transparent 55%);background-size:20px 15px;background-position:0 0,10px 7.5px;min-height:100vh;color:#fff}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);z-index:1}
+.container{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:0 1rem 5rem}
+.logo{display:flex;align-items:center;justify-content:center;padding:2.5rem 0 1.5rem}
+.hero{text-align:center;padding:1rem 0 2.5rem}
+.hero h1{font-size:36px;font-weight:800;margin:0 0 0.75rem;letter-spacing:-0.5px}
+.hero p{color:#9ca3af;font-size:16px;line-height:1.7;max-width:580px;margin:0 auto}
+.steps-intro{background:rgba(26,106,255,0.08);border:1px solid rgba(26,106,255,0.25);border-radius:14px;padding:1.5rem 2rem;margin-bottom:2rem;text-align:center}
+.steps-intro p{color:#d1d5db;font-size:15px;line-height:1.8;margin:0}
+.steps-intro strong{color:#fff}
+.step-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:2rem;margin-bottom:1.25rem;display:flex;gap:1.5rem;align-items:flex-start;text-decoration:none;transition:all 0.2s;position:relative;overflow:hidden}
+.step-card:hover{background:rgba(255,255,255,0.08);border-color:rgba(26,106,255,0.4);transform:translateY(-2px)}
+.step-num{width:52px;height:52px;border-radius:50%;background:rgba(26,106,255,0.15);border:2px solid rgba(26,106,255,0.4);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#1A6AFF;flex-shrink:0}
+.step-body{flex:1}
+.step-tag{font-size:11px;font-weight:700;letter-spacing:1.5px;color:#1A6AFF;margin-bottom:0.4rem}
+.step-title{font-size:20px;font-weight:800;color:#fff;margin-bottom:0.5rem}
+.step-desc{color:#9ca3af;font-size:14px;line-height:1.7;margin-bottom:1rem}
+.step-cta{display:inline-flex;align-items:center;gap:8px;background:#1A6AFF;color:#000;padding:0.625rem 1.25rem;border-radius:8px;font-size:14px;font-weight:800;text-decoration:none}
+.divider{display:flex;align-items:center;gap:1rem;margin:0.5rem 0 1.25rem;color:#9ca3af;font-size:13px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.08)}
+.warning-box{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem}
+.warning-box p{color:#f59e0b;font-size:14px;line-height:1.7;margin:0}
+.warning-box strong{color:#fff}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="overlay"></div>
+<div class="container">
+  <div class="logo"><img src="TWxPFF-Lockup.png" alt="PFF Enterprise — Now Part of Teamworks" style="height:96px;width:auto"></div>
+  <div class="hero">
+    <h1>Part-Time Data Collector<br>2026 Applications</h1>
+    <p>Complete all three steps below to apply. They must be done in order — each step prepares you for the next.</p>
+  </div>
+  <div class="steps-intro">
+    <p><strong>Before you apply, you need to understand the role and know which process suits you.</strong><br>
+    Work through Steps 1 and 2 first. Step 3 — the application form — will ask you to confirm you've done both.</p>
+  </div>
+  <div class="warning-box">
+    <p>⚠ <strong>You also need to apply via TeamWork Online</strong> and upload your CV and cover letter there. Both steps must be completed for your application to be valid. Once you have completed the application form here, go back to the TeamWork Online page you came from to upload your CV and cover letter if you have not already done so.</p>
+  </div>
+  <a href="/role" class="step-card">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-tag">START HERE</div>
+      <div class="step-title">Read the Full Job Description</div>
+      <div class="step-desc">Everything you need to know about the role — what you'll do, what we're looking for, what you'll earn, and what the training program involves. Read this in full before doing anything else.</div>
+      <span class="step-cta">Read the Job Description →</span>
+    </div>
+  </a>
+  <div class="divider">then</div>
+  <a href="/fit" class="step-card">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-tag">STEP 2</div>
+      <div class="step-title">Find Your Fit — Base or PP?</div>
+      <div class="step-desc">Answer six quick questions about your working style. This tool will suggest whether Base or Player Participation is the better fit for you, based on data from 200+ experienced PFF contractors. Takes about 2 minutes.</div>
+      <span class="step-cta">Use the Fit Tool →</span>
+    </div>
+  </a>
+  <div class="divider">then</div>
+  <a href="/apply" class="step-card">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="step-tag">FINAL STEP</div>
+      <div class="step-title">Complete the Application Form</div>
+      <div class="step-desc">Once you've read the job description and used the fit tool, complete the application form. It covers your availability, football knowledge, working style and background. Takes around 15–20 minutes. Answer everything as fully and honestly as possible.</div>
+      <span class="step-cta">Begin Application →</span>
+    </div>
+  </a>
+</div>
+<script>
+const canvas=document.getElementById('bg');
+const ctx=canvas.getContext('2d');
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+const pts=Array.from({length:60},()=>({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*1.5+0.4}));
+function drawBg(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(26,106,255,0.5)';ctx.fill();});
+  pts.forEach((p,i)=>pts.slice(i+1).forEach(q=>{const d=Math.hypot(p.x-q.x,p.y-q.y);if(d<70){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.strokeStyle=`rgba(26,106,255,${0.12*(1-d/70)})`;ctx.lineWidth=0.5;ctx.stroke();}}));
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+</script>
+</body>
+</html>

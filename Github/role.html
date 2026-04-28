@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PFF Enterprise — Part-Time Data Collector 2026/27</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Manrope',system-ui,sans-serif;background-color:#1F1F22;background-image:radial-gradient(ellipse 4px 2.5px at 50% 50%,#2a2a2e 55%,transparent 55%),radial-gradient(ellipse 4px 2.5px at 50% 50%,#2a2a2e 55%,transparent 55%);background-size:20px 15px;background-position:0 0,10px 7.5px;min-height:100vh;color:#fff}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);z-index:1}
+.container{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:0 1rem 5rem}
+.logo{display:flex;align-items:center;justify-content:center;padding:2.5rem 0 1.5rem}
+.hero{text-align:center;padding:2rem 0 1rem}
+.hero h1{font-size:36px;font-weight:800;margin:0 0 0.5rem;letter-spacing:-0.5px}
+.hero .sub{color:#1A6AFF;font-size:18px;margin:0 0 0.5rem}
+.hero .meta{color:#9ca3af;font-size:14px}
+.quote-box{background:linear-gradient(135deg,rgba(26,106,255,0.12),rgba(26,106,255,0.04));border:1px solid rgba(26,106,255,0.25);border-radius:14px;padding:1.5rem 2rem;margin:1.5rem 0;border-left:4px solid #1A6AFF}
+.quote-box p{color:#fff;font-size:20px;font-style:italic;line-height:1.6;margin:0 0 0.75rem}
+.quote-box cite{color:#1A6AFF;font-weight:600;font-size:14px;font-style:normal}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:1.5rem 0}
+.stat{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:1rem;text-align:center}
+.stat-val{color:#1A6AFF;font-size:22px;font-weight:800;margin-bottom:4px}
+.stat-label{color:#9ca3af;font-size:12px}
+.section-banner{background:linear-gradient(135deg,rgba(26,106,255,0.15),rgba(26,106,255,0.05));border:1px solid rgba(26,106,255,0.3);border-radius:12px;padding:1rem 1.5rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:14px}
+.section-banner .icon{font-size:28px}
+.section-banner h2{color:#fff;font-size:18px;font-weight:700;margin:0;letter-spacing:0.5px}
+.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1rem}
+p.body{color:#d1d5db;line-height:1.8;margin-bottom:0.875rem;font-size:15px}
+ul.body{padding-left:1.25rem;margin:0 0 1rem}
+ul.body li{color:#d1d5db;line-height:1.8;margin-bottom:0.25rem;font-size:15px}
+.process-card{background:rgba(255,255,255,0.05);border:1px solid rgba(26,106,255,0.25);border-radius:14px;padding:1.5rem;margin-bottom:1rem}
+.process-header{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+.process-tag{background:rgba(26,106,255,0.15);border:1px solid rgba(26,106,255,0.4);border-radius:6px;padding:3px 10px;color:#1A6AFF;font-size:12px;font-weight:700;letter-spacing:1px}
+.process-title{color:#fff;font-size:17px;font-weight:700;margin:0}
+.video-btn{display:flex;align-items:center;gap:12px;background:rgba(26,106,255,0.08);border:1px solid rgba(26,106,255,0.3);border-radius:10px;padding:0.875rem 1.25rem;text-decoration:none;margin-bottom:1rem}
+.play-icon{width:36px;height:36px;border-radius:50%;background:#1A6AFF;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.play-tri{width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:12px solid #000;margin-left:3px}
+.video-text-title{color:#fff;font-weight:700;font-size:14px}
+.video-text-sub{color:#9ca3af;font-size:12px;margin-top:2px}
+.video-arrow{margin-left:auto;color:#1A6AFF;font-size:12px;font-weight:600}
+.process-footer{display:flex;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,0.1);padding-top:0.875rem;margin-top:0.5rem}
+.process-footer span.label{color:#1A6AFF;font-size:12px;font-weight:600}
+.process-footer span.val{color:#d1d5db;font-size:13px}
+table.schedule{width:100%;border-collapse:collapse;font-size:14px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);margin-bottom:1.5rem}
+table.schedule thead tr{background:rgba(26,106,255,0.2)}
+table.schedule th{padding:0.875rem 1rem;text-align:left;color:#1A6AFF;font-weight:700}
+table.schedule td{padding:0.75rem 1rem;color:#d1d5db}
+table.schedule tr:nth-child(even) td{background:rgba(255,255,255,0.03)}
+table.schedule tr td:first-child{color:#1A6AFF;font-weight:600;white-space:nowrap}
+.earnings-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1rem}
+.earnings-year{color:#1A6AFF;font-weight:700;font-size:16px;margin-bottom:0.875rem}
+.earnings-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:0.75rem}
+.earnings-box{background:rgba(26,106,255,0.08);border-radius:8px;padding:0.75rem;text-align:center}
+.earnings-val{color:#1A6AFF;font-size:20px;font-weight:800}
+.earnings-lbl{color:#9ca3af;font-size:12px;margin-top:4px}
+.person-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:1rem}
+.person-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.875rem;text-align:center}
+.person-name{color:#fff;font-weight:700;font-size:13px;margin-bottom:4px}
+.person-role{color:#1A6AFF;font-size:11px;margin-bottom:4px}
+.person-org{color:#9ca3af;font-size:11px}
+.warning{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:0.75rem 1rem;color:#f59e0b;font-size:14px;margin-top:0.75rem}
+.danger{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:0.75rem 1rem;color:#ef4444;font-size:14px;margin-bottom:0.75rem}
+.req-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:0.75rem}
+.req-chip{background:rgba(26,106,255,0.1);border:1px solid rgba(26,106,255,0.3);border-radius:6px;padding:4px 12px;color:#1A6AFF;font-size:13px;font-weight:600}
+.back-link{display:inline-flex;align-items:center;gap:8px;color:#9ca3af;font-size:14px;text-decoration:none;margin-bottom:1.5rem;margin-top:0.5rem}
+.back-link:hover{color:#fff}
+.cta-box{background:linear-gradient(135deg,rgba(26,106,255,0.15),rgba(26,106,255,0.05));border:2px solid #1A6AFF;border-radius:16px;padding:2.5rem;text-align:center;margin:2.5rem 0}
+.cta-box h2{color:#fff;font-size:24px;font-weight:800;margin:0 0 1rem}
+.cta-box p{color:#9ca3af;font-size:15px;margin-bottom:1.5rem;line-height:1.7}
+.btn-primary{display:inline-block;background:#1A6AFF;color:#000;border:none;padding:1rem 2.5rem;border-radius:10px;font-size:16px;font-weight:800;cursor:pointer;text-decoration:none;font-family:inherit}
+.btn-primary:hover{background:#1550d4}
+.btn-secondary{display:inline-block;background:rgba(255,255,255,0.06);color:#d1d5db;border:1px solid rgba(255,255,255,0.15);padding:1rem 2.5rem;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;font-family:inherit;margin-right:1rem}
+.btn-secondary:hover{background:rgba(255,255,255,0.1)}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="overlay"></div>
+<div class="container">
+  <div class="logo"><img src="TWxPFF-Lockup.png" alt="PFF Enterprise — Now Part of Teamworks" style="height:96px;width:auto"></div>
+  <a href="/" class="back-link">← Back to hub</a>
+  <div class="hero">
+    <h1>Part-Time Data Collector</h1>
+    <p class="sub">2026 NCAA Season</p>
+    <p class="meta">Remote · Multiple positions available · Applications open now</p>
+  </div>
+  <div class="quote-box">
+    <p>"Today I will do what others won't, so tomorrow I can accomplish what others can't."</p>
+    <cite>— Jerry Rice, NFL Hall of Fame Wide Receiver</cite>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-val">500+</div><div class="stat-label">Part-time contractors</div></div>
+    <div class="stat"><div class="stat-val">60+</div><div class="stat-label">Full-time staff</div></div>
+    <div class="stat"><div class="stat-val">20+</div><div class="stat-label">Countries represented</div></div>
+  </div>
+
+  <div class="section-banner"><span class="icon">🏈</span><h2>Your Role as a Data Collector</h2></div>
+  <p class="body">Data Collection is the backbone of everything we do at PFF Enterprise. As a Data Collector, you will play a key role in delivering player and play-level data to our team clients.</p>
+  <p class="body">This is not a full-time job, but it can serve as a great way to supplement your income while gaining hands-on experience in football data analysis. If you're passionate about the game and eager to get a foot in the door of the football industry, this role offers a valuable opportunity.</p>
+  <p class="body">While there is no guarantee of a full-time role, every full-time football data analyst at PFF started as a part-time contractor. Each year, new full-time analysts are hired exclusively from within our part-time team.</p>
+  <div class="card">
+    <div style="color:#1A6AFF;font-weight:700;margin-bottom:0.5rem">Remote position — no relocation required.</div>
+    <p class="body" style="margin:0">Work centred around the 2026 NCAA College Football season (late August through early December).</p>
+    <div class="warning">⚠ Training requirement: You must successfully complete the PFF Enterprise Academy — a five-week training program — before working in-season. Week one is an unpaid e-learning program (PFFU). Training games are paid from week two onwards.</div>
+  </div>
+
+  <div class="section-banner"><span class="icon">💰</span><h2>What We Offer</h2></div>
+  <ul class="body">
+    <li>Pay of $50–$60 per game, based on play count</li>
+    <li>Exclusive access to the PFF Enterprise Slack community to connect with contractors, analysts and industry experts</li>
+    <li>Community events including Q&As with PFF Enterprise analysts, senior staff, and special guests from across the football industry</li>
+    <li>Opportunities to learn new processes and take on more responsibilities each year</li>
+    <li>Potential for a future full-time role — every PFF Enterprise data analyst started as a part-time contractor</li>
+    <li>Opportunities to work on NFL level data collection for more accurate contractors</li>
+    <li>Credible paid work experience to strengthen your resume in the sports industry</li>
+  </ul>
+
+  <div class="section-banner"><span class="icon">🎯</span><h2>What We Are Looking For</h2></div>
+  <ul class="body">
+    <li>A deep passion for football and a strong understanding of the game</li>
+    <li>Familiarity with PFF Enterprise and football data collection, or a willingness to learn</li>
+    <li>Strong communication skills, both written and verbal</li>
+    <li>Exceptional attention to detail and the ability to meet tight deadlines</li>
+    <li>Great time management skills paired with a positive work ethic</li>
+    <li>Availability to commit at least 6 hours most Saturdays during the football season</li>
+    <li>Completion of the full application process</li>
+    <li>You must be at least 18 years old to work for PFF Enterprise</li>
+  </ul>
+
+  <div class="section-banner"><span class="icon">📊</span><h2>Processes You Can Learn</h2></div>
+  <div class="process-card">
+    <div class="process-header"><span class="process-tag">ENTRY LEVEL</span><h3 class="process-title">Base</h3></div>
+    <ul class="body">
+      <li>Records detailed play-by-play data including pass locations, first contact and tackle spots</li>
+      <li>Captures trick plays, QB positioning, dropbacks, penalties and more</li>
+      <li>Base creates the plays all other processes build upon — speed and accuracy are critical</li>
+      <li>Requires fast decision-making and consistent attention to detail</li>
+    </ul>
+    <a href="https://www.youtube.com/watch?v=Rg7rA10hAa4" target="_blank" rel="noopener" class="video-btn">
+      <div class="play-icon"><div class="play-tri"></div></div>
+      <div><div class="video-text-title">Watch: See Base in action</div><div class="video-text-sub">Opens on YouTube — see exactly what this process involves</div></div>
+      <span class="video-arrow">Watch →</span>
+    </a>
+    <div class="process-footer">
+      <div><span class="label">WHEN: </span><span class="val">Live Saturdays (college), some Sunday overflow, midweek NCAA and FCS opportunities</span></div>
+      <div><span class="label">TIME: </span><span class="val">4–6 hours per game</span></div>
+    </div>
+  </div>
+  <div class="process-card">
+    <div class="process-header"><span class="process-tag">ENTRY LEVEL</span><h3 class="process-title">Player Participation (PP)</h3></div>
+    <ul class="body">
+      <li>Tracks which players are on the field, assigning correct positions and roles on every play</li>
+      <li>Captures offensive stances, press coverage and line-of-scrimmage positioning</li>
+      <li>Requires exceptional eye for detail — identifying players by subtle uniform differences, not jersey numbers</li>
+      <li>Precision and positional football knowledge are key</li>
+    </ul>
+    <a href="https://www.youtube.com/watch?v=bC37N4ZJ1pI" target="_blank" rel="noopener" class="video-btn">
+      <div class="play-icon"><div class="play-tri"></div></div>
+      <div><div class="video-text-title">Watch: See Player Participation in action</div><div class="video-text-sub">Opens on YouTube — see exactly what this process involves</div></div>
+      <span class="video-arrow">Watch →</span>
+    </a>
+    <div class="process-footer">
+      <div><span class="label">WHEN: </span><span class="val">Live Saturdays (college), some Sunday carryover, midweek NCAA and FCS opportunities</span></div>
+      <div><span class="label">TIME: </span><span class="val">4–6 hours per game</span></div>
+    </div>
+  </div>
+
+  <div class="section-banner"><span class="icon">📋</span><h2>Training & Evaluation</h2></div>
+  <p class="body">Once you've completed the full application and been accepted into our training program, you'll begin the PFF Enterprise Academy — a five-week training and evaluation period starting June 7.</p>
+  <p class="body">Week one is PFFU, an unpaid e-learning program that must be completed before your first training game is assigned. From week two onwards, training games are paid. The Academy requires around 10 hours of your time each week and is self-paced from home, with some mandatory structured drop-in sessions each week. More details will be provided to successful applicants before the start of training.</p>
+  <p class="body">PFF Enterprise operates as a meritocracy — only those who excel in the Academy will earn a place on the team for in-season work and beyond.</p>
+  <table class="schedule">
+    <thead><tr><th>Week</th><th>Dates</th><th>Activity</th></tr></thead>
+    <tbody>
+      <tr><td>Week 1</td><td>Jun 7–13</td><td>PFFU — Work through e-learning program — unpaid</td></tr>
+      <tr><td>Week 2</td><td>Jun 14–20</td><td>Training Game 1 / Mandatory drop-in sessions / 1-to-1 training — paid</td></tr>
+      <tr><td>Week 3</td><td>Jun 21–27</td><td>Review Game 1 feedback / Training Game 2 / Mandatory drop-in sessions / 1-to-1 training — paid</td></tr>
+      <tr><td colspan="3" style="text-align:center;color:#f59e0b;font-weight:600;background:rgba(245,158,11,0.06)">⚑ Week off — Jun 28–Jul 4 (July 4th holiday week)</td></tr>
+      <tr><td>Week 4</td><td>Jul 5–11</td><td>Review Game 2 feedback / Training Game 3 / Mandatory drop-in sessions / 1-to-1 training — paid</td></tr>
+      <tr><td>Week 5</td><td>Jul 12–18</td><td>Review Game 3 feedback / Training Game 4 / Mandatory drop-in sessions / 1-to-1 training — paid</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-banner"><span class="icon">📅</span><h2>In-Season Commitments</h2></div>
+  <div class="card" style="border-color:rgba(26,106,255,0.3)">
+    <div style="color:#fff;font-weight:700;font-size:16px;margin-bottom:0.5rem">The Saturday commitment is non-negotiable.</div>
+    <p class="body">You'll need to commit at least six hours most Saturdays during the NCAA season. If you're unable or unwilling to dedicate six hours on Saturdays, this role might not be the right fit for you.</p>
+    <p class="body" style="margin:0">With practice your efficiency will improve — many first-year collectors find themselves wanting to take on additional Saturday and Sunday games as the season progresses.</p>
+  </div>
+
+  <div class="section-banner"><span class="icon">💻</span><h2>Hardware & Software Requirements</h2></div>
+  <div class="card">
+    <div class="danger">⚠ Tablets, phones and Chromebooks will NOT work.</div>
+    <p class="body">You'll need a web-capable PC or Mac. A dual-monitor setup is strongly recommended. Connecting your computer to a TV via HDMI is a free alternative to a second monitor.</p>
+    <div class="req-chips"><div class="req-chip">✓ Google Drive</div><div class="req-chip">✓ Slack</div><div class="req-chip">✓ VLC Media Player</div></div>
+  </div>
+
+  <div class="section-banner"><span class="icon">📈</span><h2>What Do Data Collectors Earn?</h2></div>
+  <p class="body">Earnings vary based on availability, work rate and the number of processes you learn.</p>
+  <div class="earnings-card">
+    <div class="earnings-year">2025 Season</div>
+    <div class="earnings-grid">
+      <div class="earnings-box"><div class="earnings-val">$800+</div><div class="earnings-lbl">Average rookie earnings — one process</div></div>
+      <div class="earnings-box"><div class="earnings-val">$4,700+</div><div class="earnings-lbl">Top rookie earner — one process</div></div>
+      <div class="earnings-box"><div class="earnings-val">$24,000+</div><div class="earnings-lbl">Highest earning contractor — multi-year veteran</div></div>
+    </div>
+  </div>
+
+  <div class="section-banner"><span class="icon">🚀</span><h2>Future Opportunities</h2></div>
+  <p class="body">Our part-time Data Collectors come from all walks of life. When it comes to full-time hiring, PFF Enterprise looks exclusively within our part-time team.</p>
+  <p class="body">Contractors who return year after year are given more opportunities to learn more advanced processes, enabling them to work on more games, increase their earnings and expand their football knowledge.</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-val">100%</div><div class="stat-label">Full-time analysts started part-time</div></div>
+    <div class="stat"><div class="stat-val">Every year</div><div class="stat-label">New full-time hires since 2016*</div></div>
+    <div class="stat"><div class="stat-val">10+ years</div><div class="stat-label">Some contractors have stayed</div></div>
+  </div>
+  <p class="body" style="color:#9ca3af;font-size:12px;font-style:italic">*Exception: pandemic year 2020</p>
+
+  <div class="section-banner"><span class="icon">🏆</span><h2>Where Can PFF Enterprise Take You?</h2></div>
+  <p class="body">PFF has been a launchpad for careers across the football world.</p>
+  <div class="person-grid">
+    <div class="person-card"><div class="person-name">Bobby Slowik</div><div class="person-role">Offensive Coordinator</div><div class="person-org">Miami Dolphins</div></div>
+    <div class="person-card"><div class="person-name">Zac Robinson</div><div class="person-role">Offensive Coordinator</div><div class="person-org">Tampa Bay Buccaneers</div></div>
+    <div class="person-card"><div class="person-name">Ryan Slowik</div><div class="person-role">Safeties Coach</div><div class="person-org">New York Jets</div></div>
+    <div class="person-card"><div class="person-name">Eric Eager</div><div class="person-role">VP Football Analytics</div><div class="person-org">Carolina Panthers</div></div>
+    <div class="person-card"><div class="person-name">Ryan Feder</div><div class="person-role">Game Management Coord.</div><div class="person-org">Dallas Cowboys</div></div>
+    <div class="person-card"><div class="person-name">Steve Slowik</div><div class="person-role">Pro Scout</div><div class="person-org">San Francisco 49ers</div></div>
+    <div class="person-card"><div class="person-name">Mike Byrne</div><div class="person-role">Assistant Tight Ends Coach</div><div class="person-org">Seattle Seahawks</div></div>
+    <div class="person-card"><div class="person-name">Brad Spielberger</div><div class="person-role">Director of Football Admin</div><div class="person-org">Grand Central Sports Mgmt</div></div>
+    <div class="person-card"><div class="person-name">Anthony Treash</div><div class="person-role">Director of Football Strategy</div><div class="person-org">Notre Dame</div></div>
+    <div class="person-card"><div class="person-name">Joe Caulfield</div><div class="person-role">Assoc. AD Football Ops / GM</div><div class="person-org">Wyoming</div></div>
+    <div class="person-card"><div class="person-name">Mike Renner</div><div class="person-role">NFL and Draft Analyst</div><div class="person-org">CBS Sports</div></div>
+    <div class="person-card"><div class="person-name">Austin Gayle</div><div class="person-role">Audience Engagement Manager</div><div class="person-org">The Ringer</div></div>
+    <div class="person-card"><div class="person-name">Mike Clay</div><div class="person-role">NFL Senior Writer</div><div class="person-org">ESPN</div></div>
+    <div class="person-card"><div class="person-name">Zach Drapkin</div><div class="person-role">Senior Quantitative Analyst</div><div class="person-org">Philadelphia Eagles</div></div>
+    <div class="person-card"><div class="person-name">Haley English</div><div class="person-role">Football Information Analyst</div><div class="person-org">Detroit Lions</div></div>
+    <div class="person-card"><div class="person-name">Arjun Menon</div><div class="person-role">Football Analytics Assistant</div><div class="person-org">New York Jets</div></div>
+    <div class="person-card"><div class="person-name">Sam Monson</div><div class="person-role">Co-Host / Analyst</div><div class="person-org">The 33rd Team</div></div>
+    <div class="person-card"><div class="person-name">Steve Palazzolo</div><div class="person-role">Co-Host / Analyst</div><div class="person-org">The 33rd Team</div></div>
+    <div class="person-card"><div class="person-name">Bruce Gradkowski</div><div class="person-role">Assistant WR Coach</div><div class="person-org">Detroit Lions</div></div>
+    <div class="person-card"><div class="person-name">Jon Abbott</div><div class="person-role">Sports Trader</div><div class="person-org">FanDuel</div></div>
+  </div>
+  <p class="body">Plus many more across NCAA, NFL, ESPN, CBS, FOX, NBC and beyond.</p>
+
+  <div class="cta-box">
+    <h2>Ready to Apply?</h2>
+    <p>You've read the full job description. Head back to the hub to use the Base/PP fit tool, then complete your application.</p>
+    <a href="/" class="btn-primary">Back to Hub →</a>
+  </div>
+</div>
+<script>
+const canvas=document.getElementById('bg');
+const ctx=canvas.getContext('2d');
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+const pts=Array.from({length:60},()=>({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*1.5+0.4}));
+function drawBg(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(26,106,255,0.5)';ctx.fill();});
+  pts.forEach((p,i)=>pts.slice(i+1).forEach(q=>{const d=Math.hypot(p.x-q.x,p.y-q.y);if(d<70){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.strokeStyle=`rgba(26,106,255,${0.12*(1-d/70)})`;ctx.lineWidth=0.5;ctx.stroke();}}));
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+</script>
+</body>
+</html>

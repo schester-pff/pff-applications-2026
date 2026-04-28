@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PFF Enterprise — Application Form 2026/27</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Manrope',system-ui,sans-serif;background-color:#1F1F22;background-image:radial-gradient(ellipse 4px 2.5px at 50% 50%,#2a2a2e 55%,transparent 55%),radial-gradient(ellipse 4px 2.5px at 50% 50%,#2a2a2e 55%,transparent 55%);background-size:20px 15px;background-position:0 0,10px 7.5px;min-height:100vh;color:#fff}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);z-index:1}
+.container{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:0 1rem 4rem}
+.logo{display:flex;align-items:center;justify-content:center;padding:2.5rem 0 1.5rem}
+.progress-bar-bg{background:rgba(255,255,255,0.1);border-radius:8px;height:6px;overflow:hidden;max-width:400px;margin:0 auto 0.5rem}
+.progress-bar{height:100%;background:#1A6AFF;border-radius:8px;transition:width 0.4s}
+.screener-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:2rem;margin-bottom:1.5rem}
+.q-label{display:block;color:#fff;font-weight:500;margin-bottom:0.75rem;line-height:1.6;font-size:15px;white-space:pre-line}
+.q-num{color:#1A6AFF;font-size:12px;font-weight:700;margin-right:8px}
+.radio-opt{display:flex;align-items:center;gap:12px;cursor:pointer;padding:0.75rem 1rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;margin-bottom:8px;transition:all 0.15s}
+.radio-opt:hover{background:rgba(255,255,255,0.07)}
+.radio-opt.selected{background:rgba(26,106,255,0.12);border-color:rgba(26,106,255,0.5)}
+.radio-dot{width:18px;height:18px;border-radius:50%;border:2px solid #9ca3af;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.radio-opt.selected .radio-dot{border-color:#1A6AFF;background:#1A6AFF}
+.radio-inner{width:7px;height:7px;border-radius:50%;background:#000}
+.radio-text{color:#d1d5db;font-size:15px}
+.radio-opt.selected .radio-text{color:#fff}
+select.q-select,input.q-text,textarea.q-textarea{width:100%;background:#2a2a2e;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem 1rem;color:#fff;font-size:15px;outline:none;font-family:'Manrope',system-ui,sans-serif}
+select.q-select option{background:#1e2433;color:#fff}
+textarea.q-textarea{resize:vertical;line-height:1.6}
+.scale-row{display:flex;gap:8px}
+.scale-btn{flex:1;padding:0.75rem 0.5rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#d1d5db;font-size:16px;cursor:pointer;font-family:inherit;transition:all 0.15s}
+.scale-btn:hover{background:rgba(255,255,255,0.1)}
+.scale-btn.selected{background:rgba(26,106,255,0.2);border-color:#1A6AFF;color:#fff;font-weight:700}
+.scale-labels{display:flex;justify-content:space-between;margin-top:6px}
+.scale-lbl{color:#9ca3af;font-size:12px}
+.multicheck-row{display:flex;flex-wrap:wrap;gap:8px}
+.check-btn{padding:0.5rem 1rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#d1d5db;font-size:14px;cursor:pointer;font-family:inherit;transition:all 0.15s}
+.check-btn:hover{background:rgba(255,255,255,0.1)}
+.check-btn.selected{background:rgba(26,106,255,0.2);border-color:#1A6AFF;color:#fff}
+.q-block{margin-bottom:1.75rem}
+.nav-row{display:flex;gap:12px;margin-top:1rem}
+.btn-back{padding:0.875rem 1.5rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#d1d5db;cursor:pointer;font-size:15px;font-family:inherit}
+.btn-next{flex:1;padding:0.875rem;background:#1A6AFF;border:none;border-radius:10px;color:#000;font-weight:800;cursor:pointer;font-size:16px;font-family:inherit}
+.btn-next:disabled{background:rgba(255,255,255,0.08);color:#9ca3af;cursor:not-allowed}
+.error-msg{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:0.75rem 1rem;color:#ef4444;font-size:14px;margin-top:0.75rem;display:none}
+.waiting-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
+.waiting-overlay.active{display:flex}
+.waiting-spinner{width:48px;height:48px;border:4px solid rgba(26,106,255,0.2);border-top:4px solid #1A6AFF;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:1.5rem}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.waiting-title{color:#fff;font-size:20px;font-weight:800;margin-bottom:0.75rem}
+.waiting-sub{color:#9ca3af;font-size:15px;line-height:1.6;max-width:400px}
+.waiting-error{display:none;margin-top:1.5rem;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:1rem 1.5rem;color:#ef4444;font-size:14px;line-height:1.6;max-width:400px}
+.waiting-retry{display:none;margin-top:1.25rem;padding:0.875rem 2rem;background:#1A6AFF;border:none;border-radius:10px;color:#000;font-weight:800;font-size:16px;font-family:inherit;cursor:pointer}
+.thankyou{text-align:center;padding:3rem 1rem;display:none}
+.thankyou h2{font-size:28px;font-weight:800;margin-bottom:1rem}
+.thankyou p{color:#9ca3af;font-size:16px;line-height:1.8;margin-bottom:1rem}
+.amber-box{background:rgba(245,158,11,0.1);border:2px solid rgba(245,158,11,0.4);border-radius:14px;padding:1.5rem 2rem;margin:2rem auto;max-width:600px;text-align:center}
+.amber-box h3{color:#f59e0b;font-size:18px;font-weight:800;margin-bottom:0.75rem}
+.amber-box p{color:#d1d5db;font-size:15px;line-height:1.7;margin-bottom:0.5rem}
+.amber-box .amber-cta{color:#f59e0b;font-weight:700;font-size:15px}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="overlay"></div>
+<div class="waiting-overlay" id="waiting-overlay">
+  <div class="waiting-spinner" id="waiting-spinner"></div>
+  <div class="waiting-title" id="waiting-title">Submitting your application...</div>
+  <div class="waiting-sub" id="waiting-sub">Please do not close or refresh this page.</div>
+  <div class="waiting-error" id="waiting-error">Something went wrong — please click the button below to try again. Your answers have been saved.</div>
+  <button class="waiting-retry" id="waiting-retry" onclick="retrySubmit()">Try Again →</button>
+</div>
+<div class="container">
+  <div id="page-form">
+    <div class="logo"><img src="TWxPFF-Lockup.png" alt="PFF Enterprise — Now Part of Teamworks" style="height:96px;width:auto"></div>
+    <div id="form-body"></div>
+    <div class="thankyou" id="thankyou">
+      <div class="logo"><img src="TWxPFF-Lockup.png" alt="PFF Enterprise — Now Part of Teamworks" style="height:80px;width:auto"></div>
+      <h2>Thank You, <span id="ty-name"></span>!</h2>
+      <p class="sub" style="color:#1A6AFF;font-size:18px;margin-bottom:0.5rem">PFF Part-Time Data Collector — 2026/27</p>
+      <div style="background:rgba(26,106,255,0.1);border:1px solid rgba(26,106,255,0.25);border-radius:14px;padding:1.5rem 2rem;margin:1.5rem auto;max-width:600px">
+        <p style="color:#1A6AFF;font-weight:700;margin-bottom:0.5rem">✓ Application Questions Complete</p>
+        <p style="color:#d1d5db;font-size:15px;line-height:1.7">Thank you for completing your application. Your responses have been received and will be reviewed by our team.</p>
+        <p style="color:#9ca3af;font-size:14px;margin-top:0.75rem">We will be in touch regarding next steps. If you have any questions please contact <a href="mailto:schester@teamworks.com" style="color:#1A6AFF">schester@teamworks.com</a></p>
+      </div>
+      <div class="amber-box">
+        <h3>⚠ Important — Action Required</h3>
+        <p>You must now return to the TeamWork Online job posting to upload your CV and cover letter.</p>
+        <p class="amber-cta">Your application will not be considered valid until this is completed.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const canvas=document.getElementById('bg');
+const ctx=canvas.getContext('2d');
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+const pts=Array.from({length:60},()=>({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*1.5+0.4}));
+function drawBg(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(26,106,255,0.5)';ctx.fill();});
+  pts.forEach((p,i)=>pts.slice(i+1).forEach(q=>{const d=Math.hypot(p.x-q.x,p.y-q.y);if(d<70){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.strokeStyle=`rgba(26,106,255,${0.12*(1-d/70)})`;ctx.lineWidth=0.5;ctx.stroke();}}));
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+
+const COUNTRIES=["Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo (DRC)","Congo (Republic)","Costa Rica","Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"];
+
+const SECTIONS=[
+  {title:"Section 1 — About You",qs:[
+    {id:"q0a",text:"Full name",type:"text",ph:"Your full name"},
+    {id:"q0b",text:"Email address",type:"text",ph:"The email address you used to apply on TeamWork Online"},
+    {id:"q1",text:"Are you 18 or over?",type:"radio",opts:["Yes","No"]},
+    {id:"q2",text:"Which country do you currently live in?",type:"select",opts:COUNTRIES},
+    {id:"q14",text:"What time zone are you based in?",type:"select",opts:["GMT / UTC+0 (UK, West Africa)","CET / UTC+1 (Central Europe)","EET / UTC+2 (Eastern Europe)","MSK / UTC+3 (Moscow)","GST / UTC+4 (Gulf)","IST / UTC+5:30 (India)","CST / UTC+8 (China)","JST / UTC+9 (Japan)","AEST / UTC+10 (Eastern Australia)","EST / UTC-5 (US Eastern)","CST / UTC-6 (US Central)","MST / UTC-7 (US Mountain)","PST / UTC-8 (US Pacific)","AKT / UTC-9 (Alaska)","HAW / UTC-10 (Hawaii)"]},
+    {id:"q3",text:"Can you commit to at least 6 hours most Saturdays during the football season?",type:"radio",opts:["Yes","No"]},
+    {id:"q4",text:"Do you have access to a PC or Mac computer?\n(Tablets, phones and Chromebooks are not supported)",type:"radio",opts:["Yes — PC","Yes — Mac","No"]},
+  ]},
+  {title:"Section 2 — Knowledge & Motivation",qs:[
+    {id:"q7",text:"Do you have any previous football experience — select all that apply.",type:"multicheck",opts:["Playing","Coaching","Team management","No previous experience"]},
+    {id:"q8",text:"In your own words, describe what PFF does.",type:"textarea",ph:"Please describe what you know about PFF and what it does..."},
+    {id:"q9",text:"Name and describe at least two PFF metrics or stats you are familiar with.",type:"textarea",ph:"Describe at least two PFF metrics or statistics you know about..."},
+    {id:"q11",text:"How would you rate your overall knowledge of football?",type:"scale",scale:10,labels:["Very limited","Expert"]},
+    {id:"q38",text:"Without looking anything up, pick a college or NFL team and describe their offensive scheme. What makes their offense distinctive?",type:"textarea",ph:"Name the team, describe how their offense works and what sets it apart..."},
+  ]},
+  {title:"Section 3 — Role Preference",qs:[
+    {id:"q5",text:"Before continuing, please confirm you have read the full job description and completed the Base/PP fit tool on the hub page.",type:"radio",opts:["Yes, I have done both","No, I have not done this yet"]},
+    {id:"q13",text:"Are you applying for Base, PP, or are you open to both?\n\nBase: Play-by-play data capture — speed and accuracy focused.\nPP: Player identification and participation tracking — precision and football knowledge focused.",type:"radio",opts:["Base","PP (Player Participation)","Open to both"]},
+  ]},
+  {title:"Section 4 — Availability",qs:[
+    {id:"q15",text:"How many hours are you typically available on Saturdays during the football season?",type:"select",opts:["Less than 4 hours","4–6 hours","6–8 hours","8–10 hours","10+ hours","Varies week to week"]},
+    {id:"q16",text:"How many hours are you typically available on Sundays during the football season?",type:"select",opts:["Not available Sundays","Less than 4 hours","4–6 hours","6–8 hours","8–10 hours","10+ hours","Varies week to week"]},
+    {id:"q17",text:"The college football season runs from late August through early December. Are you able to commit to this full period?",type:"radio",opts:["Yes, fully committed","Mostly — I may miss a small number of Saturdays","Uncertain — I have some conflicts","No, I cannot commit to the full period"]},
+    {id:"q18",text:"Please mark any Saturdays you know you will be unavailable (Late Aug – Early Dec 2026):",type:"multicheck",opts:["Aug 29","Sep 5","Sep 12","Sep 19","Sep 26","Oct 3","Oct 10","Oct 17","Oct 24","Oct 31","Nov 7","Nov 14","Nov 21","Nov 28","Dec 5","None — I am available all Saturdays"]},
+  ]},
+  {title:"Section 5 — Suitability & Coachability",qs:[
+    {id:"q20",text:"Have you used data entry or sports tracking software before?",type:"radio",opts:["Yes — professionally","Yes — personally/hobby","No but I am comfortable with technology","No experience"]},
+    {id:"q22",text:"How comfortable are you working independently at a computer for 6–7 hours with minimal breaks?",type:"scale",scale:10,labels:["Very difficult","No issue at all"]},
+    {id:"q19",text:"Describe a time you maintained focus and accuracy on a repetitive detailed task over several hours.",type:"textarea",ph:"Describe the task, how long it took, and how you maintained accuracy throughout..."},
+    {id:"q26",text:"You've just been told that 5 of your plays from last Saturday's game had significant errors in them. You have no idea what they are. What do you do first, and what does your process look like over the next 24 hours?",type:"textarea",ph:"Walk us through exactly what you would do..."},
+    {id:"q37",text:"What do you hope to gain from this role beyond the financial compensation?",type:"textarea",ph:"Tell us what motivates you about this opportunity beyond the pay..."},
+  ]},
+  {title:"Section 6 — Hardware & Tools",qs:[
+    {id:"q31",text:"Do you have a dual monitor setup or access to a TV you could connect to your computer via HDMI?",type:"radio",opts:["Yes — dual monitors","Yes — TV via HDMI","Yes — both","No, but I could set one up","No"]},
+    {id:"q32",text:"Do you have a stable and reliable internet connection suitable for streaming live game footage?",type:"radio",opts:["Yes — very reliable","Yes — generally reliable","Sometimes unreliable","Often unreliable"]},
+    {id:"q33",text:"Do you have or are you willing to set up a Slack account?",type:"radio",opts:["Yes — I already use Slack","Yes — I am willing to set one up","No"]},
+    {id:"q34",text:"How comfortable are you using Slack or similar communication platforms?",type:"scale",scale:5,labels:["Never used","Use it daily"]},
+  ]},
+  {title:"Section 7 — Final Confirmation",qs:[
+    {id:"q35",text:"Have you previously applied to work as a PFF Data Collector?",type:"radio",opts:["Yes","No"]},
+    {id:"q36",text:"If yes — what was the outcome?",type:"radio",opts:["I was not accepted into the training program","I started training but did not complete it","I completed training but did not pass the course"],showIf:{id:"q35",val:"Yes"}},
+    {id:"q39",text:"How did you hear about this role?",type:"radio",opts:["LinkedIn","Twitter / X","TeamWork Online","Friend or colleague","Google or job search","University or college campus","Other"]},
+    {id:"q40",text:"Please tell us where you heard about the role.",type:"textarea",ph:"e.g. a specific website, community, group or person...",showIf:{id:"q39",val:"Other"}},
+    {id:"q6",text:"I confirm I will submit my CV and cover letter via the TeamWork Online application portal.",type:"radio",opts:["Yes, I confirm","No"]},
+  ]},
+];
+
+const SHEET_URL="https://script.google.com/macros/s/AKfycbweg-AtcSesL6fwqg7HOFDNqSGIEpkUbEUqv-DRy-0YCjE0zc5THGzkwqnaJ1sMrxtw/exec";
+let answers={};
+let currentSec=0;
+
+function setAnswer(id,val){answers[id]=val;}
+function setRadio(id,val,el){
+  answers[id]=val;
+  el.closest('.q-block').querySelectorAll('.radio-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('.radio-dot').innerHTML='<div class="radio-inner"></div>';
+  el.closest('.q-block').querySelectorAll('.radio-opt:not(.selected) .radio-dot').forEach(d=>d.innerHTML='');
+}
+function setScale(id,val,el){
+  answers[id]=val;
+  el.closest('.scale-row').querySelectorAll('.scale-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function toggleCheck(id,val){
+  if(!answers[id])answers[id]=[];
+  const idx=answers[id].indexOf(val);
+  if(idx>-1)answers[id].splice(idx,1);
+  else answers[id].push(val);
+  renderSection();
+}
+
+function renderSection(){
+  const s=SECTIONS[currentSec];
+  const prog=Math.round(((currentSec)/SECTIONS.length)*100);
+  const isLast=currentSec===SECTIONS.length-1;
+  const qOffset=SECTIONS.slice(0,currentSec).reduce((acc,s)=>acc+s.qs.length,0);
+  let visibleQNum=qOffset;
+  let qHtml=s.qs.map((q,qi)=>{
+    if(q.showIf&&answers[q.showIf.id]!==q.showIf.val)return'';
+    visibleQNum++;
+    const v=answers[q.id];
+    let input='';
+    if(q.type==='radio'){
+      input=q.opts.map(o=>`<div class="radio-opt${v===o?' selected':''}" onclick="setRadio('${q.id}','${o.replace(/'/g,"\\'").replace(/"/g,"&quot;")}',this)"><div class="radio-dot">${v===o?'<div class="radio-inner"></div>':''}</div><span class="radio-text">${o}</span></div>`).join('');
+    }else if(q.type==='select'){
+      input=`<select class="q-select" onchange="setAnswer('${q.id}',this.value)"><option value="">Select an option...</option>${q.opts.map(o=>`<option value="${o}"${v===o?' selected':''}>${o}</option>`).join('')}</select>`;
+    }else if(q.type==='textarea'){
+      input=`<textarea class="q-textarea" rows="5" placeholder="${q.ph||''}" oninput="setAnswer('${q.id}',this.value)">${v||''}</textarea>`;
+    }else if(q.type==='text'){
+      input=`<input class="q-text" type="text" placeholder="${q.ph||''}" value="${v||''}" oninput="setAnswer('${q.id}',this.value)">`;
+    }else if(q.type==='scale'){
+      input=`<div class="scale-row">${Array.from({length:q.scale},(_,i)=>i+1).map(n=>`<button class="scale-btn${v===n?' selected':''}" onclick="setScale('${q.id}',${n},this)">${n}</button>`).join('')}</div><div class="scale-labels"><span class="scale-lbl">${q.labels[0]}</span><span class="scale-lbl">${q.labels[1]}</span></div>`;
+    }else if(q.type==='multicheck'){
+      const arr=answers[q.id]||[];
+      input=`<div class="multicheck-row">${q.opts.map(o=>`<button class="check-btn${arr.includes(o)?' selected':''}" onclick="toggleCheck('${q.id}','${o.replace(/'/g,"\\'")}')">${o}</button>`).join('')}</div>`;
+    }
+    return`<div class="q-block"><label class="q-label"><span class="q-num">${visibleQNum}.</span>${q.text}</label>${input}</div>`;
+  }).join('');
+
+  document.getElementById('form-body').innerHTML=`
+  <div style="text-align:center;padding:1.5rem 0 1rem">
+    <h2 style="color:#fff;font-size:22px;font-weight:700;margin:0 0 1rem">Application Form</h2>
+    <div class="progress-bar-bg"><div class="progress-bar" style="width:${prog}%"></div></div>
+    <p style="color:#9ca3af;font-size:13px;margin-top:0.5rem">Section ${currentSec+1} of ${SECTIONS.length} — ${s.title}</p>
+  </div>
+  <div class="screener-card">
+    <h3 style="color:#1A6AFF;font-size:17px;font-weight:700;margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(255,255,255,0.1)">${s.title}</h3>
+    ${qHtml}
+  </div>
+  <div id="err-msg" class="error-msg">Please answer all questions before continuing.</div>
+  <div class="nav-row">
+    ${currentSec>0?`<button class="btn-back" onclick="goBack()">← Back</button>`:''}
+    <button class="btn-next" onclick="${isLast?'submitForm()':'goNext()'}">${isLast?'Submit Application →':'Next →'}</button>
+  </div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function validateSection(){
+  const s=SECTIONS[currentSec];
+  for(const q of s.qs){
+    if(q.showIf&&answers[q.showIf.id]!==q.showIf.val)continue;
+    const v=answers[q.id];
+    if(!v||v===''||(Array.isArray(v)&&v.length===0))return false;
+  }
+  return true;
+}
+
+function goNext(){
+  if(!validateSection()){document.getElementById('err-msg').style.display='block';return;}
+  document.getElementById('err-msg').style.display='none';
+  currentSec++;
+  renderSection();
+}
+function goBack(){
+  currentSec--;
+  renderSection();
+}
+function retrySubmit(){submitForm();}
+
+function showWaiting(){
+  document.getElementById('waiting-spinner').style.display='block';
+  document.getElementById('waiting-title').textContent='Submitting your application...';
+  document.getElementById('waiting-sub').textContent='Please do not close or refresh this page.';
+  document.getElementById('waiting-error').style.display='none';
+  document.getElementById('waiting-retry').style.display='none';
+  document.getElementById('waiting-overlay').classList.add('active');
+}
+function showWaitingError(){
+  document.getElementById('waiting-spinner').style.display='none';
+  document.getElementById('waiting-title').textContent='Something went wrong';
+  document.getElementById('waiting-error').style.display='block';
+  document.getElementById('waiting-retry').style.display='block';
+}
+function hideWaiting(){document.getElementById('waiting-overlay').classList.remove('active');}
+
+async function submitForm(){
+  if(!validateSection()){document.getElementById('err-msg').style.display='block';return;}
+  showWaiting();
+
+  const payload={
+    name:answers['q0a']||'',
+    email:answers['q0b']||'',
+    country:answers['q2']||'',
+    timezone:answers['q14']||'',
+    saturday_commitment:answers['q3']||'',
+    hardware:answers['q4']||'',
+    football_experience:Array.isArray(answers['q7'])?answers['q7'].join(', '):(answers['q7']||''),
+    what_pff_does:answers['q8']||'',
+    pff_metrics:answers['q9']||'',
+    football_knowledge_rating:answers['q11']||'',
+    offensive_scheme:answers['q38']||'',
+    read_role_info:answers['q5']||'',
+    process_preference:answers['q13']||'',
+    saturday_hours:answers['q15']||'',
+    sunday_hours:answers['q16']||'',
+    full_season_commitment:answers['q17']||'',
+    unavailable_saturdays:Array.isArray(answers['q18'])?answers['q18'].join(', '):(answers['q18']||''),
+    data_software:answers['q20']||'',
+    independent_comfort:answers['q22']||'',
+    repetitive_task:answers['q19']||'',
+    error_scenario:answers['q26']||'',
+    motivation:answers['q37']||'',
+    dual_monitor:answers['q31']||'',
+    internet_reliability:answers['q32']||'',
+    slack_account:answers['q33']||'',
+    slack_comfort:answers['q34']||'',
+    applied_before:answers['q35']||'',
+    previous_outcome:answers['q36']||'',
+    how_did_you_hear:answers['q39']||'',
+    how_did_you_hear_other:answers['q40']||'',
+    cv_confirmation:answers['q6']||'',
+  };
+
+  let success=false;
+  for(let attempt=0;attempt<3;attempt++){
+    try{
+      const res=await fetch('/.netlify/functions/submit',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      const json=await res.json();
+      if(json.status==='success'){success=true;break;}
+    }catch(err){
+      if(attempt<2)await new Promise(r=>setTimeout(r,2000));
+    }
+  }
+
+  if(!success){showWaitingError();return;}
+  hideWaiting();
+  document.getElementById('form-body').style.display='none';
+  document.getElementById('ty-name').textContent=answers['q0a']||'';
+  document.getElementById('thankyou').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+renderSection();
+</script>
+</body>
+</html>

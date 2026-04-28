@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PFF Enterprise — Base or Player Participation (PP)? Find Your Fit</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Manrope',system-ui,sans-serif;background-color:#1F1F22;background-image:radial-gradient(ellipse 4px 2.5px at 50% 50%,#2a2a2e 55%,transparent 55%),radial-gradient(ellipse 4px 2.5px at 50% 50%,#2a2a2e 55%,transparent 55%);background-size:20px 15px;background-position:0 0,10px 7.5px;min-height:100vh;color:#fff}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);z-index:1}
+.container{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:0 1rem 5rem}
+.logo{display:flex;align-items:center;justify-content:center;padding:2.5rem 0 1.5rem}
+.back-link{display:inline-flex;align-items:center;gap:8px;color:#9ca3af;font-size:14px;text-decoration:none;margin-bottom:1.5rem}
+.back-link:hover{color:#fff}
+.hero{text-align:center;padding:1rem 0 2rem}
+.hero h1{font-size:32px;font-weight:800;margin:0 0 0.5rem}
+.hero p{color:#9ca3af;font-size:16px;line-height:1.7;max-width:600px;margin:0 auto}
+.intro-box{background:rgba(26,106,255,0.08);border:1px solid rgba(26,106,255,0.25);border-left:4px solid #1A6AFF;border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:2rem}
+.intro-box p{color:#d1d5db;font-size:14px;line-height:1.8;margin:0}
+.q-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:2rem;margin-bottom:1.25rem}
+.q-text{color:#fff;font-size:17px;font-weight:600;line-height:1.5;margin-bottom:1.25rem}
+.q-num{color:#1A6AFF;font-size:13px;font-weight:700;margin-bottom:0.5rem}
+.likert-row{display:flex;flex-direction:column;gap:8px}
+.likert-opt{display:flex;align-items:center;gap:12px;cursor:pointer;padding:0.75rem 1rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;transition:all 0.15s}
+.likert-opt:hover{background:rgba(255,255,255,0.07)}
+.likert-opt.selected{background:rgba(26,106,255,0.12);border-color:rgba(26,106,255,0.5)}
+.likert-dot{width:18px;height:18px;border-radius:50%;border:2px solid #9ca3af;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.likert-opt.selected .likert-dot{border-color:#1A6AFF;background:#1A6AFF}
+.likert-inner{width:7px;height:7px;border-radius:50%;background:#000}
+.likert-text{color:#d1d5db;font-size:15px}
+.likert-opt.selected .likert-text{color:#fff}
+.btn-submit{width:100%;padding:1rem;background:#1A6AFF;border:none;border-radius:10px;color:#000;font-weight:800;cursor:pointer;font-size:16px;font-family:inherit;margin-top:1rem}
+.btn-submit:disabled{background:rgba(255,255,255,0.08);color:#9ca3af;cursor:not-allowed}
+.btn-retake{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#d1d5db;font-size:14px;padding:0.625rem 1.25rem;cursor:pointer;font-family:inherit;margin-top:1rem}
+.result-box{background:rgba(255,255,255,0.05);border:2px solid #1A6AFF;border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem;display:none}
+.result-label{color:#1A6AFF;font-size:12px;font-weight:700;letter-spacing:1.5px;margin-bottom:0.75rem}
+.result-title{font-size:28px;font-weight:800;margin-bottom:0.75rem}
+.result-sub{color:#9ca3af;font-size:15px;line-height:1.7;margin-bottom:1.5rem;max-width:500px;margin-left:auto;margin-right:auto}
+.result-note{color:#9ca3af;font-size:13px;font-style:italic;margin-bottom:1.5rem}
+.btn-apply{display:inline-block;background:#1A6AFF;color:#000;padding:0.875rem 2.5rem;border-radius:10px;font-size:16px;font-weight:800;text-decoration:none;font-family:inherit}
+.btn-apply:hover{background:#1550d4}
+.error-msg{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:0.75rem 1rem;color:#ef4444;font-size:14px;margin-top:0.75rem;display:none}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="overlay"></div>
+<div class="container">
+  <div class="logo"><img src="TWxPFF-Lockup.png" alt="PFF Enterprise — Now Part of Teamworks" style="height:96px;width:auto"></div>
+  <a href="/" class="back-link">← Back to hub</a>
+  <div class="hero">
+    <h1>Base or Player Participation (PP) — Find Your Fit</h1>
+    <p>Answer six short questions to find out which process suits your working style. There are no right or wrong answers — be as honest as possible.</p>
+  </div>
+  <div class="intro-box">
+    <p>These questions are based on feedback from over 200 experienced PFF contractors who completed the same exercise. The result is a guide only — you should always choose the process that interests you most based on what you read in the job description.</p>
+  </div>
+
+  <div id="questions-section">
+    <div class="q-card">
+      <div class="q-num">Question 1 of 6</div>
+      <div class="q-text">I work comfortably under time pressure.</div>
+      <div class="likert-row" id="q-apt_a"></div>
+    </div>
+    <div class="q-card">
+      <div class="q-num">Question 2 of 6</div>
+      <div class="q-text">I would rather be able to follow the game closely while I work.</div>
+      <div class="likert-row" id="q-apt_b"></div>
+    </div>
+    <div class="q-card">
+      <div class="q-num">Question 3 of 6</div>
+      <div class="q-text">I can recognize individual players by their physical characteristics and equipment rather than their jersey number.</div>
+      <div class="likert-row" id="q-apt_c"></div>
+    </div>
+    <div class="q-card">
+      <div class="q-num">Question 4 of 6</div>
+      <div class="q-text">I would describe myself as more of a precision worker than a speed worker.</div>
+      <div class="likert-row" id="q-apt_d"></div>
+    </div>
+    <div class="q-card">
+      <div class="q-num">Question 5 of 6</div>
+      <div class="q-text">When a problem arises, I ask for help quickly rather than figuring it out on my own.</div>
+      <div class="likert-row" id="q-apt_e"></div>
+    </div>
+    <div class="q-card">
+      <div class="q-num">Question 6 of 6</div>
+      <div class="q-text">I prefer to work at my own pace without my speed affecting others.</div>
+      <div class="likert-row" id="q-apt_f"></div>
+    </div>
+    <div class="error-msg" id="err-msg">Please answer all six questions before seeing your result.</div>
+    <button class="btn-submit" onclick="calculateResult()">See My Result →</button>
+  </div>
+
+  <div class="result-box" id="result-box">
+    <div class="result-label">YOUR WORKING STYLE RESULT</div>
+    <div class="result-title" id="result-title"></div>
+    <div class="result-sub" id="result-sub"></div>
+    <div class="result-note">This is a guide only — choose the process that interests you most.</div>
+    <a href="/apply" class="btn-apply">Continue to Application →</a>
+    <br><br>
+    <button class="btn-retake" onclick="retake()">↩ Retake this tool</button>
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('bg');
+const ctx=canvas.getContext('2d');
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+const pts=Array.from({length:60},()=>({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*1.5+0.4}));
+function drawBg(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(26,106,255,0.5)';ctx.fill();});
+  pts.forEach((p,i)=>pts.slice(i+1).forEach(q=>{const d=Math.hypot(p.x-q.x,p.y-q.y);if(d<70){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.strokeStyle=`rgba(26,106,255,${0.12*(1-d/70)})`;ctx.lineWidth=0.5;ctx.stroke();}}));
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+
+const OPTS=["Strongly Disagree","Disagree","Neutral","Agree","Strongly Agree"];
+const QUESTIONS=['apt_a','apt_b','apt_c','apt_d','apt_e','apt_f'];
+const answers={};
+
+function renderOpts(qid){
+  const container=document.getElementById('q-'+qid);
+  container.innerHTML=OPTS.map(o=>`
+    <div class="likert-opt${answers[qid]===o?' selected':''}" onclick="select('${qid}','${o}',this)">
+      <div class="likert-dot">${answers[qid]===o?'<div class="likert-inner"></div>':''}</div>
+      <span class="likert-text">${o}</span>
+    </div>`).join('');
+}
+
+function select(qid,val,el){
+  answers[qid]=val;
+  const container=document.getElementById('q-'+qid);
+  container.querySelectorAll('.likert-opt').forEach(o=>{o.classList.remove('selected');o.querySelector('.likert-dot').innerHTML='';});
+  el.classList.add('selected');
+  el.querySelector('.likert-dot').innerHTML='<div class="likert-inner"></div>';
+}
+
+function scoreOpt(val){
+  const map={"Strongly Disagree":1,"Disagree":2,"Neutral":3,"Agree":4,"Strongly Agree":5};
+  return map[val]||3;
+}
+
+function calculateResult(){
+  for(const q of QUESTIONS){
+    if(!answers[q]){document.getElementById('err-msg').style.display='block';return;}
+  }
+  document.getElementById('err-msg').style.display='none';
+
+  // Base signals: time pressure comfort (apt_a), not needing to follow game (apt_b inverse)
+  // PP signals: player recognition (apt_c), precision over speed (apt_d), own pace (apt_f)
+  const baseScore=(scoreOpt(answers['apt_a'])*2)+(6-scoreOpt(answers['apt_b']))*1.5;
+  const ppScore=(scoreOpt(answers['apt_c'])*2)+(scoreOpt(answers['apt_d'])*2)+(scoreOpt(answers['apt_f'])*1.5);
+
+  let result,sub;
+  const diff=baseScore-ppScore;
+  if(diff>4){
+    result='Base looks like a strong fit for you';
+    sub='Your answers suggest you are comfortable working at speed under time pressure — the core skill set for Base data collection. Base is fast-paced play-by-play capture where quick, accurate decisions matter above everything else.';
+  }else if(diff<-4){
+    result='PP looks like a strong fit for you';
+    sub='Your answers suggest you prefer precision over speed and have strong attention to physical detail — exactly what Player Participation demands. PP involves identifying individual players by subtle physical cues on every play.';
+  }else{
+    result='You could suit either process';
+    sub='Your answers do not show a strong lean toward either Base or PP. Read both process descriptions carefully on the job description page and go with whichever sounds more interesting to you — genuine interest in the work is the strongest predictor of success.';
+  }
+
+  document.getElementById('result-title').textContent=result;
+  document.getElementById('result-sub').textContent=sub;
+  document.getElementById('questions-section').style.display='none';
+  document.getElementById('result-box').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function retake(){
+  QUESTIONS.forEach(q=>delete answers[q]);
+  QUESTIONS.forEach(q=>renderOpts(q));
+  document.getElementById('questions-section').style.display='block';
+  document.getElementById('result-box').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+QUESTIONS.forEach(q=>renderOpts(q));
+</script>
+</body>
+</html>
