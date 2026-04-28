@@ -1,6 +1,16 @@
 [build]
   functions = "netlify/functions"
 
+[functions]
+  node_bundler = "esbuild"
+
+[[functions]]
+  path = "/api/submit"
+  included_files = ["netlify/functions/submit.js"]
+
+[functions."submit"]
+  timeout = 26
+
 [[redirects]]
   from = "/apply"
   to = "/apply.html"
