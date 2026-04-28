@@ -4,11 +4,7 @@
 [functions]
   node_bundler = "esbuild"
 
-[[functions]]
-  path = "/api/submit"
-  included_files = ["netlify/functions/submit.js"]
-
-[functions."submit"]
+[functions.submit]
   timeout = 26
 
 [[redirects]]
